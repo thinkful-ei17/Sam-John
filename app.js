@@ -5,34 +5,6 @@ const store = {
     score: 0,
 }
 
-// const store2 = {
-//     view: 'question',
-//     question: 1,
-// }
-
-// const store3 = {
-//     view: 'feedback',
-//     question: 1,
-//     currentAnswer: 0,
-//     score: 0
-// }
-
-// const store4 = {
-//     view: 'question',
-//     // StartOver
-//     question: 2,
-//     currentAnswer: null,
-//     score: 0,
-// }
-
-// ...
-// const storeLast = {
-    // view: 'finish',
-    // question: null,
-    // currentAnswer: null,
-    // score: __/5,
-// }
-
 const questions = [
     {
         question: "Who is 'the hound'",
@@ -87,8 +59,6 @@ function render(){
 
 render();
 
-// Render Start Page
-
 $('#start').click(function(event){
     console.log('Start button was clicked');
     store.view = 'question';
@@ -96,12 +66,6 @@ $('#start').click(function(event){
     writeQuestion();
     render();
 });
-
-// Listen for Click on Start the Quiz Button
-    // store.view = question
-// 
-// Render Q1
-// 
 
 $('#quiz').on('click', '#answerSubmit', function(event){
     console.log('Answer Submit button was clicked');
@@ -121,8 +85,6 @@ $('#quiz').on('click', '#answerSubmit', function(event){
     render();
 });
 
-// Listen for Click on Submit Button -- verify answer has been given
-// 
 function checkAnswer(){
     if (store.currentAnswer === questions[store.question-1].answer){
         $('.wrong').hide();
@@ -131,13 +93,6 @@ function checkAnswer(){
         $('.correct').hide();
     }
 }
-    
-
-// $('.feedback').append(
-//     `
-    
-//     `
-// )
 
 $('#quiz').on('click', '#nextQuestion', function(event){
     store.question++;
@@ -146,12 +101,6 @@ $('#quiz').on('click', '#nextQuestion', function(event){
     writeQuestion();
     render();
 });
-// Render Q1 - Feedback
-    // Box correct answer
-    // If user correct, write CORRECT next to answer
-    // Else, write WRONG next to their answer
-    // Update Progress
-    // Update Current Score
 
 function writeQuestion() {
     let num = store.question-1
@@ -204,7 +153,35 @@ function writeFeedback() {
     </div>
     `)
 }
-    //
-// 
-// 
-// Listen for Click on Proceed to Next Question Button
+
+const verdict;
+if(store.score === 0){
+    verdict = <p>You know nothing Jon Snow.</p>;
+} else if (store.score === 1){
+    verdict = <p>The Lannister's send their regards</p>;
+} else if (store.score === 2){
+    verdict = <p>You would die by The Mountain! It's time for you to rewatch Game Of Thrones.</p>;
+}else if (store.score === 3){
+    verdict = <p>You have gained the attention of the Lord Of Light. Perhaps with more practice you may be his Chosen One.</p>;
+} else if ( store.score === 4){
+    verdict = <p>You really know your Game Of Thrones. You would fit right in on Westeros</p>;
+} else if ( store.score === 5){
+    verdict = <p>ok ok ok. You definitely know your Game Of Thrones. Now it's time for you to go outside and get some sun.</p>;
+}
+
+
+
+function finalPage(){
+    $('.finish').replaceWith(
+    `<div class='finish'>
+    <h2>Congratulations</h2>
+    <h2 id="numberCorrect"> You got ${store.score} correct</h2>
+    ${verdict}
+    <button type="submit">Try Again?</button>
+</div>`)
+}
+
+
+
+
+
