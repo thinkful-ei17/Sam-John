@@ -1,8 +1,8 @@
 const store = {
     view: 'start',
-    question: 1,
+    question: null,
     currentAnswer: null,
-    score: null,
+    score: 0,
 }
 
 // const store2 = {
@@ -93,6 +93,7 @@ $('#start').click(function(event){
     console.log('Start button was clicked');
     store.view = 'question';
     store.question = 1;
+    writeQuestion();
     render();
 });
 
@@ -111,10 +112,11 @@ $('#quiz').on('click', '#answerSubmit', function(event){
         return false;
     }
 
+    
     let response = $('input[name="answerChoice"]:checked').val();
-    console.log(typeof response);
     store.view = 'feedback';
-    store.currentAnswer = response;
+    store.currentAnswer = parseInt(response, 10);
+    writeFeedback();
     checkAnswer();
     render();
 });
@@ -124,9 +126,9 @@ $('#quiz').on('click', '#answerSubmit', function(event){
 function checkAnswer(){
     if (store.currentAnswer === questions[store.question-1].answer){
         $('.wrong').hide();
-    }else{
+        store.score++;
+    } else{
         $('.correct').hide();
-        console.log('hey');
     }
 }
     
@@ -137,13 +139,72 @@ function checkAnswer(){
 //     `
 // )
 
+$('#quiz').on('click', '#nextQuestion', function(event){
+    store.question++;
+    store.view = 'question';
+    console.log(store.question);
+    writeQuestion();
+    render();
+});
 // Render Q1 - Feedback
     // Box correct answer
     // If user correct, write CORRECT next to answer
     // Else, write WRONG next to their answer
     // Update Progress
     // Update Current Score
-//
+
+function writeQuestion() {
+    let num = store.question-1
+    $('.questionsPage').replaceWith(`
+    <div class="questionsPage">
+        <h2>Question ${store.question}/5</h2>
+        <p id="question">${questions[num].question}?</p>
+        <p id="progress">Progress</p>
+        <form id='options' action="">
+            <input type="radio" value="0" name="answerChoice" id="optionA">
+            <label for="optionA" required>${questions[num].options[0]}</label>
+
+            <input type="radio" value="1" name="answerChoice" id="optionB">
+            <label for="optionB">${questions[num].options[1]}</label>
+
+            <input type="radio" value="2" name="answerChoice" id="optionC">
+            <label for="optionC">${questions[num].options[2]}</label>
+
+            <input type="radio" value="3" name="answerChoice" id="optionD">
+            <label for="optionD">${questions[num].options[3]}</label>
+        </form>
+        <button type="submit" id="answerSubmit">Submit</button>
+    </div>
+    `)
+}
+
+function writeFeedback() {
+    let num = store.question-1
+    $('.feedback').replaceWith(`
+    <div class="feedback">
+        <h2>Question ${store.question}/5</h2>
+        <p id="question">${questions[num].question}?</p>
+        <p id="progress">Progress</p>
+        <p class='correct'>You are CORRECT!</p>
+        <p class='wrong'>You are WRONG!</p>
+        <form id='options' action="">
+            <input type="radio" value="0" name="answerChoice" id="optionA">
+            <label for="optionA" required>${questions[num].options[0]}</label>
+
+            <input type="radio" value="1" name="answerChoice" id="optionB">
+            <label for="optionB">${questions[num].options[1]}</label>
+
+            <input type="radio" value="2" name="answerChoice" id="optionC">
+            <label for="optionC">${questions[num].options[2]}</label>
+
+            <input type="radio" value="3" name="answerChoice" id="optionD">
+            <label for="optionD">${questions[num].options[3]}</label>
+        </form>
+        <button type="submit" id="nextQuestion">Proceed to Next Question</button>
+    </div>
+    `)
+}
+    //
 // 
 // 
 // Listen for Click on Proceed to Next Question Button
