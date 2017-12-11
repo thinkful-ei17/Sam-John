@@ -1,6 +1,6 @@
 const store = {
     view: 'start',
-    question: null,
+    question: 1,
     currentAnswer: null,
     score: null,
 }
@@ -112,19 +112,23 @@ $('#quiz').on('click', '#answerSubmit', function(event){
     }
 
     let response = $('input[name="answerChoice"]:checked').val();
-    console.log(response);
+    console.log(typeof response);
     store.view = 'feedback';
     store.currentAnswer = response;
+    checkAnswer();
     render();
 });
 
 // Listen for Click on Submit Button -- verify answer has been given
 // 
-
-// if (store.currentAnswer === questions[store.question-1].answer){
-//     $('.wrong').hidden();
-
-// }
+function checkAnswer(){
+    if (store.currentAnswer === questions[store.question-1].answer){
+        $('.wrong').hide();
+    }else{
+        $('.correct').hide();
+        console.log('hey');
+    }
+}
     
 
 // $('.feedback').append(
