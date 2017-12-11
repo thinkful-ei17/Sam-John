@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Game Of Thrones Quiz!</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="start">
+        <h1>Game Of Thrones Quiz</h1>
+        <p>This quiz is meant to test the knowledge of the most rabid of Game Of Thrones fans!</p>
+        <input type="submit" value="Start the quiz!">
+    </div>
+    <div class="questionsPage">
+        <h2>Question $(number/5)</h2>
+        <p id="question">Who is 'the hound'?</p>
+        <p id="progress">Progress</p>
+        <form action="">
+            <input type="radio" value ="0" id="optionA">
+            <label for="optionA">Jon Snow</label>
+
+            <input type="radio" value="1" id="optionB">
+            <label for="optionB">Sandor Clegane</label>
+
+            <input type="radio" value="2" id="optionC">
+            <label for="optionC">Jamie Lannister</label>
+
+            <input type="radio" value="3" id="optionD">
+            <label for="optionD">Khal Drogo</label>
+        </form>
+        <button type="submit"></button>
+    </div>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>html
