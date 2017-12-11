@@ -76,7 +76,6 @@ $('#quiz').on('click', '#answerSubmit', function(event){
         return false;
     }
 
-    
     let response = $('input[name="answerChoice"]:checked').val();
     store.view = 'feedback';
     store.currentAnswer = parseInt(response, 10);
@@ -154,31 +153,34 @@ function writeFeedback() {
     `)
 }
 
-const verdict;
-if(store.score === 0){
-    verdict = <p>You know nothing Jon Snow.</p>;
+let verdict = '';
+
+if (store.score === 0){
+    verdict = "<p>You know nothing Jon Snow.</p>";
 } else if (store.score === 1){
-    verdict = <p>The Lannister's send their regards</p>;
+    verdict = "<p>The Lannister's send their regards</p>";
 } else if (store.score === 2){
-    verdict = <p>You would die by The Mountain! It's time for you to rewatch Game Of Thrones.</p>;
+    verdict = "<p>You would die by The Mountain! It's time for you to rewatch Game Of Thrones.</p>";
 }else if (store.score === 3){
-    verdict = <p>You have gained the attention of the Lord Of Light. Perhaps with more practice you may be his Chosen One.</p>;
-} else if ( store.score === 4){
-    verdict = <p>You really know your Game Of Thrones. You would fit right in on Westeros</p>;
-} else if ( store.score === 5){
-    verdict = <p>ok ok ok. You definitely know your Game Of Thrones. Now it's time for you to go outside and get some sun.</p>;
+    verdict = "<p>You have gained the attention of the Lord Of Light. Perhaps with more practice you may be his Chosen One.</p>";
+} else if (store.score === 4){
+    verdict = "<p>You really know your Game Of Thrones. You would fit right in on Westeros</p>";
+} else if (store.score === 5){
+    verdict = "<p>Ok ok ok. You definitely know your Game Of Thrones. Now it's time for you to go outside and get some sun.</p>";
 }
 
 
 
 function finalPage(){
+    console.log('Final Page run');
     $('.finish').replaceWith(
     `<div class='finish'>
-    <h2>Congratulations</h2>
-    <h2 id="numberCorrect"> You got ${store.score} correct</h2>
-    ${verdict}
-    <button type="submit">Try Again?</button>
-</div>`)
+        <h2>Congratulations</h2>
+        <h2 id="numberCorrect"> You got ${store.score} correct</h2>
+        ${verdict}
+        <button type="submit">Try Again?</button>
+    </div>
+    `);
 }
 
 
