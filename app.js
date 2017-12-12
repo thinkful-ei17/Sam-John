@@ -124,8 +124,8 @@ $('#quiz').on('click', '#answerSubmit', function(event){
     let response = $('input[name="answerChoice"]:checked').val();
     store.view = 'feedback';
     store.currentAnswer = parseInt(response, 10);
-    writeFeedback();
-    checkAnswer();
+    // writeFeedback();
+    // checkAnswer();
     render();
 });
 
