@@ -115,18 +115,25 @@ function writeQuestion() {
         <p id="question">${questions[num].question}?</p>
         <p id="progress">Progress: ${store.score}/${num}</p>
         <form id='options' action="">
-            <div id = ${}
+            <div>
                 <input type="radio" value="0" name="answerChoice" id="optionA">
                 <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
+            </div>
         <br>
-            <input type="radio" value="1" name="answerChoice" id="optionB">
-            <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+            <div id="radio1">
+                <input type="radio" value="1" name="answerChoice" id="optionB">
+                <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+            </div>
         <br>
-            <input type="radio" value="2" name="answerChoice" id="optionC">
-            <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
-        <br>
-            <input type="radio" value="3" name="answerChoice" id="optionD">
-            <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+            <div id="radio2">
+                <input type="radio" value="2" name="answerChoice" id="optionC">
+                <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
+            </div>
+        <br>    
+            <div id="radio3">
+                <input type="radio" value="3" name="answerChoice" id="optionD">
+                <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+            </div>
         <br>
         </form>
         <button type="submit" id="answerSubmit">SUBMIT</button>
@@ -142,17 +149,25 @@ function writeFeedback() {
         <p id="progress">Progress: ${store.score}/${num + 1}</p>
         <p>You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
         <form id='options' action="">
-            <input type="radio" value="0" name="answerChoice" id="optionA">
-            <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
+            <div  class="${questions[num].answer === 0 ? 'correct' : 'false'}>
+                <input type="radio" value="0" name="answerChoice" id="optionA">
+                <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
+            </div>
         <br>
-            <input type="radio" value="1" name="answerChoice" id="optionB">
-            <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+            <div class="${questions[num].answer === 1 ? 'correct' : 'false'}>
+                <input type="radio" value="1" name="answerChoice" id="optionB">
+                <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+            </div>
         <br>
-            <input type="radio" value="2" name="answerChoice" id="optionC">
-            <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
+            <div class="${questions[num].answer === 2 ? 'correct' : 'false'}>
+                <input type="radio" value="2" name="answerChoice" id="optionC">
+                <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
+            </div>
         <br>
-            <input type="radio" value="3" name="answerChoice" id="optionD">
-            <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+            <div class="${questions[num].answer === 3 ? 'correct' : 'false'}>
+                <input type="radio" value="3" name="answerChoice" id="optionD">
+                <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+            </div>
         <br>
         </form>
         <button type="submit" id="nextQuestion">NEXT</button>

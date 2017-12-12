@@ -20,6 +20,10 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.correct {
+    border: 2px solid forestgreen;
+}
+
 button {
     background: rgb(138, 2, 97);
     color: #fff;
