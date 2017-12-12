@@ -34,6 +34,7 @@ const questions = [
 ]
 
 function render(){
+    let num = store.question-1
     if (store.view === 'start') {
         $('.start').show();
         $('.questionsPage').hide();
@@ -43,12 +44,56 @@ function render(){
         $('.start').hide();
         $('.questionsPage').show();
         $('.feedback').hide(); 
-        $('.finish').hide();        
+        $('.finish').hide();
+        $('.questionsPage').replaceWith(`
+        <div class="questionsPage">
+            <h2>Question ${store.question}/5</h2>
+            <p id="question">${questions[num].question}?</p>
+            <p id="progress">Progress</p>
+            <form id='options' action="">
+                <input type="radio" value="0" name="answerChoice" id="optionA">
+                <label for="optionA" required>${questions[num].options[0]}</label>
+    
+                <input type="radio" value="1" name="answerChoice" id="optionB">
+                <label for="optionB">${questions[num].options[1]}</label>
+    
+                <input type="radio" value="2" name="answerChoice" id="optionC">
+                <label for="optionC">${questions[num].options[2]}</label>
+    
+                <input type="radio" value="3" name="answerChoice" id="optionD">
+                <label for="optionD">${questions[num].options[3]}</label>
+            </form>
+            <button type="submit" id="answerSubmit">Submit</button>
+        </div>
+        `)        
     } else if (store.view === 'feedback') {
         $('.start').hide();
         $('.questionsPage').hide();
         $('.feedback').show();
-        $('.finish').hide(); 
+        $('.finish').hide();
+        $('.feedback').replaceWith(`
+        <div class="feedback">
+            <h2>Question ${store.question}/5</h2>
+            <p id="question">${questions[num].question}?</p>
+            <p id="progress">Progress</p>
+            <p class='correct'>You are CORRECT!</p>
+            <p class='wrong'>You are WRONG!</p>
+            <form id='options' action="">
+                <input type="radio" value="0" name="answerChoice" id="optionA">
+                <label for="optionA" required>${questions[num].options[0]}</label>
+    
+                <input type="radio" value="1" name="answerChoice" id="optionB">
+                <label for="optionB">${questions[num].options[1]}</label>
+    
+                <input type="radio" value="2" name="answerChoice" id="optionC">
+                <label for="optionC">${questions[num].options[2]}</label>
+    
+                <input type="radio" value="3" name="answerChoice" id="optionD">
+                <label for="optionD">${questions[num].options[3]}</label>
+            </form>
+            <button type="submit" id="nextQuestion">Proceed to Next Question</button>
+        </div>
+        `)
     } else {
         $('.start').hide();
         $('.questionsPage').hide();
@@ -101,57 +146,57 @@ $('#quiz').on('click', '#nextQuestion', function(event){
     render();
 });
 
-function writeQuestion() {
-    let num = store.question-1
-    $('.questionsPage').replaceWith(`
-    <div class="questionsPage">
-        <h2>Question ${store.question}/5</h2>
-        <p id="question">${questions[num].question}?</p>
-        <p id="progress">Progress</p>
-        <form id='options' action="">
-            <input type="radio" value="0" name="answerChoice" id="optionA">
-            <label for="optionA" required>${questions[num].options[0]}</label>
+// function writeQuestion() {
+//     let num = store.question-1
+//     $('.questionsPage').replaceWith(`
+//     <div class="questionsPage">
+//         <h2>Question ${store.question}/5</h2>
+//         <p id="question">${questions[num].question}?</p>
+//         <p id="progress">Progress</p>
+//         <form id='options' action="">
+//             <input type="radio" value="0" name="answerChoice" id="optionA">
+//             <label for="optionA" required>${questions[num].options[0]}</label>
 
-            <input type="radio" value="1" name="answerChoice" id="optionB">
-            <label for="optionB">${questions[num].options[1]}</label>
+//             <input type="radio" value="1" name="answerChoice" id="optionB">
+//             <label for="optionB">${questions[num].options[1]}</label>
 
-            <input type="radio" value="2" name="answerChoice" id="optionC">
-            <label for="optionC">${questions[num].options[2]}</label>
+//             <input type="radio" value="2" name="answerChoice" id="optionC">
+//             <label for="optionC">${questions[num].options[2]}</label>
 
-            <input type="radio" value="3" name="answerChoice" id="optionD">
-            <label for="optionD">${questions[num].options[3]}</label>
-        </form>
-        <button type="submit" id="answerSubmit">Submit</button>
-    </div>
-    `)
-}
+//             <input type="radio" value="3" name="answerChoice" id="optionD">
+//             <label for="optionD">${questions[num].options[3]}</label>
+//         </form>
+//         <button type="submit" id="answerSubmit">Submit</button>
+//     </div>
+//     `)
+// }
 
-function writeFeedback() {
-    let num = store.question-1
-    $('.feedback').replaceWith(`
-    <div class="feedback">
-        <h2>Question ${store.question}/5</h2>
-        <p id="question">${questions[num].question}?</p>
-        <p id="progress">Progress</p>
-        <p class='correct'>You are CORRECT!</p>
-        <p class='wrong'>You are WRONG!</p>
-        <form id='options' action="">
-            <input type="radio" value="0" name="answerChoice" id="optionA">
-            <label for="optionA" required>${questions[num].options[0]}</label>
+// function writeFeedback() {
+//     let num = store.question-1
+//     $('.feedback').replaceWith(`
+//     <div class="feedback">
+//         <h2>Question ${store.question}/5</h2>
+//         <p id="question">${questions[num].question}?</p>
+//         <p id="progress">Progress</p>
+//         <p class='correct'>You are CORRECT!</p>
+//         <p class='wrong'>You are WRONG!</p>
+//         <form id='options' action="">
+//             <input type="radio" value="0" name="answerChoice" id="optionA">
+//             <label for="optionA" required>${questions[num].options[0]}</label>
 
-            <input type="radio" value="1" name="answerChoice" id="optionB">
-            <label for="optionB">${questions[num].options[1]}</label>
+//             <input type="radio" value="1" name="answerChoice" id="optionB">
+//             <label for="optionB">${questions[num].options[1]}</label>
 
-            <input type="radio" value="2" name="answerChoice" id="optionC">
-            <label for="optionC">${questions[num].options[2]}</label>
+//             <input type="radio" value="2" name="answerChoice" id="optionC">
+//             <label for="optionC">${questions[num].options[2]}</label>
 
-            <input type="radio" value="3" name="answerChoice" id="optionD">
-            <label for="optionD">${questions[num].options[3]}</label>
-        </form>
-        <button type="submit" id="nextQuestion">Proceed to Next Question</button>
-    </div>
-    `)
-}
+//             <input type="radio" value="3" name="answerChoice" id="optionD">
+//             <label for="optionD">${questions[num].options[3]}</label>
+//         </form>
+//         <button type="submit" id="nextQuestion">Proceed to Next Question</button>
+//     </div>
+//     `)
+// }
 
 let verdict = '';
 
