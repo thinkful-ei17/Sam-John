@@ -75,20 +75,14 @@ $('#start').click(function (event) {
 $('#quiz').on('submit', '#optionsQuestions', function (event) {
     event.preventDefault();
     if ($('input[name="answerChoice"]').is(':checked')) {
-        console.log('We have an answer');
+        let response = $('input[name="answerChoice"]:checked').val();
+        store.view = 'feedback';
+        store.currentAnswer = parseInt(response, 10);
+        render();
     } else {
         alert('Please select something!');
         return false;
     }
-
-    let response = $('input[name="answerChoice"]:checked').val();
-    if (store.question === 4) {
-        store.view = 'finish';
-    } else {
-        store.view = 'feedback';
-    }
-    store.currentAnswer = parseInt(response, 10);
-    render();
 });
 
 function checkAnswer() {
@@ -103,7 +97,11 @@ function checkAnswer() {
 $('#quiz').on('submit', '#optionsFeedback', function (event) {
     event.preventDefault();
     store.question++;
-    store.view = 'question';
+    if (store.question === 5) {
+        store.view = 'finish';
+    } else {
+        store.view = 'question';
+    }
     render();
 });
 
@@ -113,7 +111,7 @@ function writeQuestion() {
         <h2>Question ${store.question + 1}/5</h2>
         <p id="question">${questions[num].question}?</p>
         <p id="progress">Progress: ${store.score}/${num}</p>
-        <form id='optionsQuestions' action="">
+        <form id='optionsQuestions' role="form" action="">
             <div>
                 <input type="radio" role=radio value="0" name="answerChoice" id="optionA">
                 <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
@@ -149,7 +147,7 @@ function writeFeedback() {
         <p id="question">${questions[num].question}?</p>
         <p id="progress">Progress: ${store.score}/${num + 1}</p>
         <p id="feedbackResult">You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
-        <form id='optionsFeedback' action="">
+        <form id='optionsFeedback' role="form" action="">
             <div class="${questions[num].answer === 0 ? 'correct' : 'false'}">
                 ${questions[num].options[0]}
             </div>
