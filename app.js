@@ -14,7 +14,7 @@ const questions = [
     },
     {
         question: "Who is the father of Jamie Lannister",
-        options: ['Foreman Lannister', 'Kevin Lannister', 'Tywin Lannister', 'Tyrion Lannister'],
+        options: ['Bran Lannister', 'Kevin Lannister', 'Tywin Lannister', 'Tyrion Lannister'],
         answer: 2
     },
     {
@@ -29,14 +29,14 @@ const questions = [
     },
     {
         question: "Who is the rightful Heir of Westeros",
-        options: ['Theon GreyJoy', 'Aegon Targaryan', 'Daenerys Targaryan', 'Cersei Lannister'],
+        options: ['Theon', 'Aegon', 'Daenerys', 'Cersei'],
         answer: 1
     }
 ]
 
 function render(){
     if (store.view === 'start') {
-        $('.start').show();
+    $('.start').show();
         $('.questionsPage').hide();
         $('.feedback').hide(); 
         $('.finish').hide();
@@ -113,19 +113,21 @@ function writeQuestion() {
     return `<div class="questionsPage">
         <h2>Question ${store.question + 1}/5</h2>
         <p id="question">${questions[num].question}?</p>
-        <p id="progress">Progress</p>
+        <p id="progress">Progress: ${store.score}/${num}</p>
         <form id='options' action="">
-            <input type="radio" value="0" name="answerChoice" id="optionA">
-            <label for="optionA" required>${questions[num].options[0]}</label>
-
+            <div id = ${}
+                <input type="radio" value="0" name="answerChoice" id="optionA">
+                <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
+        <br>
             <input type="radio" value="1" name="answerChoice" id="optionB">
-            <label for="optionB">${questions[num].options[1]}</label>
-
+            <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+        <br>
             <input type="radio" value="2" name="answerChoice" id="optionC">
-            <label for="optionC">${questions[num].options[2]}</label>
-
+            <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
+        <br>
             <input type="radio" value="3" name="answerChoice" id="optionD">
-            <label for="optionD">${questions[num].options[3]}</label>
+            <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+        <br>
         </form>
         <button type="submit" id="answerSubmit">SUBMIT</button>
     </div>
@@ -137,20 +139,21 @@ function writeFeedback() {
     return `<div class="feedback">
         <h2>Question ${store.question + 1}/5</h2>
         <p id="question">${questions[num].question}?</p>
-        <p id="progress">Progress</p>
+        <p id="progress">Progress: ${store.score}/${num + 1}</p>
         <p>You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
         <form id='options' action="">
             <input type="radio" value="0" name="answerChoice" id="optionA">
-            <label for="optionA" required>${questions[num].options[0]}</label>
-
+            <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
+        <br>
             <input type="radio" value="1" name="answerChoice" id="optionB">
-            <label for="optionB">${questions[num].options[1]}</label>
-
+            <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+        <br>
             <input type="radio" value="2" name="answerChoice" id="optionC">
-            <label for="optionC">${questions[num].options[2]}</label>
-
+            <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
+        <br>
             <input type="radio" value="3" name="answerChoice" id="optionD">
-            <label for="optionD">${questions[num].options[3]}</label>
+            <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+        <br>
         </form>
         <button type="submit" id="nextQuestion">NEXT</button>
     </div>
