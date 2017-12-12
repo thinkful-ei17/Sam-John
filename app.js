@@ -113,22 +113,22 @@ function writeQuestion() {
         <p id="progress">Progress: ${store.score}/${num}</p>
         <form id='optionsQuestions' role="form" action="">
             <div>
-                <input type="radio" role=radio value="0" name="answerChoice" id="optionA">
+                <input type="radio" value="0" name="answerChoice" id="optionA">
                 <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
             </div>
         <br>
             <div id="radio1">
-                <input type="radio" role=radio value="1" name="answerChoice" id="optionB">
+                <input type="radio" value="1" name="answerChoice" id="optionB">
                 <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
             </div>
         <br>
             <div id="radio2">
-                <input type="radio" role=radio value="2" name="answerChoice" id="optionC">
+                <input type="radio" value="2" name="answerChoice" id="optionC">
                 <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
             </div>
         <br>    
             <div id="radio3">
-                <input type="radio" role=radio value="3" name="answerChoice" id="optionD">
+                <input type="radio" value="3" name="answerChoice" id="optionD">
                 <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
             </div>
         <br>
@@ -193,7 +193,7 @@ function writeFinalPage() {
         <h2>Congratulations</h2>
         <h2 id="numberCorrect"> You got ${store.score} correct</h2>
         ${verdict}
-        <button type="submit" id="tryAgain">TRY AGAIN?</button>
+        <button type="submit" alt="Try Again?" id="tryAgain">TRY AGAIN?</button>
     </div>
     `;
 }
