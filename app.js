@@ -84,6 +84,15 @@ function createEmptyQuestionsFolder() {
     }
 }
 
+function shuffleArray(array){
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+};
+
 function importAndRenderQuestions(data){
     apiQuestions = data.results;
     for (let i=0; i<store.numberOfQuestions; i++){
@@ -91,6 +100,9 @@ function importAndRenderQuestions(data){
         newQuestions[i].options = data.results[i].incorrect_answers;
         newQuestions[i].answer = data.results[i].correct_answer;
         newQuestions[i].options.push(newQuestions[i].answer);
+        console.log(newQuestions[i].options);
+        shuffleArray(newQuestions[i].options);
+        console.log(newQuestions[i].options);
     }
     console.log(newQuestions);
     render();
