@@ -84,7 +84,7 @@ function createEmptyQuestionsFolder() {
     }
 }
 
-function recordQuestions(data){
+function importAndRenderQuestions(data){
     apiQuestions = data.results;
     for (let i=0; i<store.numberOfQuestions; i++){
         newQuestions[i].question = data.results[i].question;
@@ -106,33 +106,6 @@ function requestedNumberOfQuestions(){
 function requestedCategory(){
     query.category = $('#optionsOfCategories').val();
 };
-
-const questions = [{
-        question: "Who is 'the hound'",
-        options: ['Jon Snow', 'Sandor Clegane', 'Jamie Lannister', 'Khal Drogo'],
-        answer: 'Sandor Clegane'
-    },
-    {
-        question: "Who is the father of Jamie Lannister",
-        options: ['Bran Lannister', 'Kevin Lannister', 'Tywin Lannister', 'Tyrion Lannister'],
-        answer: 2
-    },
-    {
-        question: "What faction is Grey Worm a part of",
-        options: ['Unsullied', 'Mormonts', 'THE NORFFF', 'Dothraki'],
-        answer: 0
-    },
-    {
-        question: "Where do the Starks Live",
-        options: ['Winterfell', 'Highgarden', 'The Wall', 'The Twins'],
-        answer: 0
-    },
-    {
-        question: "Who is the rightful Heir of Westeros",
-        options: ['Theon', 'Aegon', 'Daenerys', 'Cersei'],
-        answer: 1
-    }
-]
 
 function render() {
     if (store.view === 'start') {
@@ -179,7 +152,7 @@ $('#start').click(function (event) {
         requestedNumberOfQuestions();
         requestedCategory();
         createEmptyQuestionsFolder();
-        fetchQuestions(recordQuestions);
+        fetchQuestions(importAndRenderQuestions);
     }
 });
 
@@ -219,7 +192,7 @@ $('#quiz').on('submit', '#optionsFeedback', function (event) {
 function writeQuestion() {
     let num = store.question;
     return `<div class="questionsPage">
-        <h2>Question ${store.question + 1}/5</h2>
+        <h2>Question ${store.question + 1}/${store.numberOfQuestions}</h2>
         <p id="question">${newQuestions[num].question}?</p>
         <p id="progress">Progress: ${store.score}/${num}</p>
         <form id='optionsQuestions' role="form" action="">
@@ -254,9 +227,9 @@ function writeQuestion() {
 function writeFeedback() {
     let num = store.question;
     return `<div class="feedback">
-        <h2>Question ${store.question + 1}/5</h2>
+        <h2>Question ${store.question + 1}/${store.numberOfQuestions}</h2>
         <p id="question">${newQuestions[num].question}?</p>
-        <p id="progress">Progress: ${store.score}/${numberOfQuestions}</p>
+        <p id="progress">Progress: ${store.score}/${num}</p>
         <p id="feedbackResult">You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
         <form id='optionsFeedback' role="form" action="">
             <div class="${newQuestions[num].answer === newQuestions[num].options[0] ? 'correct' : 'false'}">
@@ -301,7 +274,7 @@ function writeFinalPage() {
     }
 
     return `<div class='finish'>
-        <h2>Congratulations</h2>
+        <h2>Congratulations!</h2>
         <h2 id="numberCorrect"> You got ${store.score} correct</h2>
         ${verdict}
         <button type="submit" alt="Try Again?" id="tryAgain">TRY AGAIN?</button>
