@@ -35,7 +35,28 @@ fetchSessionToken(updateStoreTokenStatus);
 
 // fetch questions from API
 
+let apiQuestions = [];
 
+const QUESTION_PATH = '/api.php'
+const query = {
+    amount: 10,
+    type: 'multiple',
+}
+
+function fetchQuestions(callback) {
+    $.getJSON(BASE_URL + QUESTION_PATH, query, function(queryResult){
+        if (queryResult.response_code !== 0) {
+            throw new Error('Something went wrong');
+        } else {
+            callback(queryResult);
+        }
+    })
+};
+
+function recordQuestions(data){
+    apiQuestions = data.results;
+    console.log(apiQuestions);
+};
 
 const questions = [{
         question: "Who is 'the hound'",
@@ -100,6 +121,7 @@ render();
 $('#start').click(function (event) {
     store.view = 'question';
     store.question = 0;
+    fetchQuestions(recordQuestions);
     render();
 });
 
