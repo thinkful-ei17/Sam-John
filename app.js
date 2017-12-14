@@ -229,7 +229,7 @@ function writeFeedback() {
     return `<div class="feedback">
         <h2>Question ${store.question + 1}/${store.numberOfQuestions}</h2>
         <p id="question">${newQuestions[num].question}?</p>
-        <p id="progress">Progress: ${store.score}/${num}</p>
+        <p id="progress">Progress: ${store.score}/${store.question + 1}</p>
         <p id="feedbackResult">You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
         <form id='optionsFeedback' role="form" action="">
             <div class="${newQuestions[num].answer === newQuestions[num].options[0] ? 'correct' : 'false'}">
@@ -258,19 +258,21 @@ function writeFeedback() {
 }
 
 function writeFinalPage() {
+    let num = parseInt(store.numberOfQuestions, 10);
     let verdict = '';
+    console.log(num/2);
     if (store.score === 0) {
         verdict = "<p>You know nothing Jon Snow.</p>";
-    } else if (store.score < numberOfQuestions/5) {
-        verdict = "<p>You should probably do some more studying before you try again.</p>";
-    } else if (store.score < numberOfQuestions/2) {
-        verdict = "<p>I guess that could have been worse.</p>";
-    } else if (store.score < numberOfQuestions/1.5) {
+    } else if (store.score === num) {
+        verdict = "<p>Okay okay okay. You definitely know your triva. Now it's time for you to go outside and get some sun.</p>"; 
+    } else if (store.score > num/1.5) {
         verdict = "<p>That was probably a fluke. Try AGAIN.</p>";
-    } else if (store.score === numberOfQuestions) {
-        verdict = "<p>Okay okay okay. You definitely know your triva. Now it's time for you to go outside and get some sun.</p>";
+    } else if (store.score > num/2) {
+        verdict = "<p>I guess that could have been worse.</p>";
+    } else if (store.score > num/5) {
+        verdict = "<p>Come on. That's the best you can do. Try Harder.</p>";
     } else {
-        verdict = "<p>I'm impressed, but you could do better. Keep at it and maybe one day you'll get them all.</p>"
+        verdict = "<p>You should probably do some more studying before you try again.</p>"
     }
 
     return `<div class='finish'>
