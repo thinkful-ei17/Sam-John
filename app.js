@@ -5,7 +5,7 @@ const store = {
     answerCorrect: null,
     score: 0,
     sessionTokenStatus: false,
-    // numberOfQuestions: SUBMITTED,
+    numberOfQuestions: null,
 }
 
 // fetch session token from API
@@ -17,7 +17,7 @@ const TOKEN_PATH = '/api_token.php';
 function fetchSessionToken(callback) {
    $.getJSON(BASE_URL + TOKEN_PATH, {command: 'request'}, function(response) {
       if (response.response_code !== 0) {
-        throw new Error('Something went wrong');
+        throw new Error('There was a problem connecting to the API. Try again later.');
       } else {
         sessionToken = response.token;
         callback();
@@ -25,7 +25,7 @@ function fetchSessionToken(callback) {
       }
    })
 };
-    
+
 function updateStoreTokenStatus(){
     store.sessionTokenStatus = true;
     console.log(sessionToken);
@@ -33,35 +33,92 @@ function updateStoreTokenStatus(){
 
 fetchSessionToken(updateStoreTokenStatus);
 
+// fet categories from API
+
+let categories = [];
+
+const CATEGORY_PATH = '/api_category.php';
+
+function fetchQuestionCategories(callback) {
+    $.getJSON(BASE_URL + CATEGORY_PATH, function(response) {
+         callback(response);
+    })
+ };
+
+function recordCategories(data){
+    categories = data.trivia_categories;
+    console.log(categories);
+};
+
+ fetchQuestionCategories(recordCategories);
+
 // fetch questions from API
 
 let apiQuestions = [];
 
 const QUESTION_PATH = '/api.php'
 const query = {
-    amount: 10,
     type: 'multiple',
+    token: sessionToken,
+    amount: null,
+    category: null,
 }
 
 function fetchQuestions(callback) {
     $.getJSON(BASE_URL + QUESTION_PATH, query, function(queryResult){
         if (queryResult.response_code !== 0) {
-            throw new Error('Something went wrong');
+            throw new Error('There was a problem connecting to the API. Try again later.');
         } else {
             callback(queryResult);
         }
     })
 };
 
+let newQuestions = [];
+
+function createEmptyQuestionsFolder() {
+    for (let i=0; i<store.numberOfQuestions; i++){
+        newQuestions.push({'question': null, 'options': null, 'answer': null});
+    }
+}
+
 function recordQuestions(data){
     apiQuestions = data.results;
-    console.log(apiQuestions);
+    for (let i=0; i<store.numberOfQuestions; i++){
+        newQuestions[i].question = data.results[i].question;
+        newQuestions[i].options = data.results[i].incorrect_answers;
+        newQuestions[i].answer = data.results[i].correct_answer;
+        newQuestions[i].options.push(newQuestions[i].answer);
+    }
+    console.log(newQuestions);
+}
+    
+    // function convertQuestions(questionData) {
+    //     console.log(questionData);
+    //     for (let i=0; i<store.numberOfQuestions; i++){
+    //         newQuestions.push(questionData[i].question);
+    //     }
+    //     console.log(newQuestions);
+
+// log requested data (number of questions, category)
+
+function requestedNumberOfQuestions(){
+    query.amount = $('#optionsOfQuestions').val()
+    store.numberOfQuestions = $('#optionsOfQuestions').val();
 };
+
+function requestedCategory(){
+    query.category = $('#optionsOfCategories').val();
+};
+
+// convert questions into proper format
+
+
 
 const questions = [{
         question: "Who is 'the hound'",
         options: ['Jon Snow', 'Sandor Clegane', 'Jamie Lannister', 'Khal Drogo'],
-        answer: 1
+        answer: 'Sandor Clegane'
     },
     {
         question: "Who is the father of Jamie Lannister",
@@ -118,11 +175,22 @@ function render() {
 
 render();
 
+
+
 $('#start').click(function (event) {
-    store.view = 'question';
-    store.question = 0;
-    fetchQuestions(recordQuestions);
-    render();
+    event.preventDefault();
+    if (store.sessionTokenStatus !== true){
+        alert("Please be patient. I'm still loading.")
+    } else {
+        store.view = 'question';
+        store.question = 0;
+        requestedNumberOfQuestions();
+        requestedCategory();
+        createEmptyQuestionsFolder();
+        fetchQuestions(recordQuestions);
+        // convertQuestions(apiQuestions);
+        render();
+    }
 });
 
 $('#quiz').on('submit', '#optionsQuestions', function (event) {
@@ -130,7 +198,7 @@ $('#quiz').on('submit', '#optionsQuestions', function (event) {
     if ($('input[name="answerChoice"]').is(':checked')) {
         let response = $('input[name="answerChoice"]:checked').val();
         store.view = 'feedback';
-        store.currentAnswer = parseInt(response, 10);
+        store.currentAnswer = newQuestions.answer;
         render();
     } else {
         alert('Please select something!');
@@ -147,42 +215,42 @@ function checkAnswer() {
     }
 }
 
-// $('#quiz').on('submit', '#optionsFeedback', function (event) {
-//     event.preventDefault();
-//     store.question++;
-//     if (store.question === store.numberOfQuestions) {
-//         store.view = 'finish';
-//     } else {
-//         store.view = 'question';
-//     }
-//     render();
-// });
+$('#quiz').on('submit', '#optionsFeedback', function (event) {
+    event.preventDefault();
+    store.question++;
+    if (store.question === store.numberOfQuestions) {
+        store.view = 'finish';
+    } else {
+        store.view = 'question';
+    }
+    render();
+});
 
 function writeQuestion() {
     let num = store.question;
     return `<div class="questionsPage">
         <h2>Question ${store.question + 1}/5</h2>
-        <p id="question">${questions[num].question}?</p>
+        <p id="question">${newQuestions[num].question}?</p>
         <p id="progress">Progress: ${store.score}/${num}</p>
         <form id='optionsQuestions' role="form" action="">
             <div>
-                <input type="radio" value="0" name="answerChoice" id="optionA">
-                <label for="optionA"><span><span></span></span>${questions[num].options[0]}</label>
+                <input type="radio" value="${newQuestions[num].options[0]}" name="answerChoice" id="optionA">
+                <label for="optionA"><span><span></span></span>${newQuestions[num].options[0]}</label>
             </div>
         <br>
             <div id="radio1">
-                <input type="radio" value="1" name="answerChoice" id="optionB">
-                <label for="optionB"><span><span></span></span>${questions[num].options[1]}</label>
+                <input type="radio" value="${newQuestions[num].options[1]}" name="answerChoice" id="optionB">
+                <label for="optionB"><span><span></span></span>${newQuestions[num].options[1]}</label>
             </div>
         <br>
             <div id="radio2">
-                <input type="radio" value="2" name="answerChoice" id="optionC">
-                <label for="optionC"><span><span></span></span>${questions[num].options[2]}</label>
+                <input type="radio" value="${newQuestions[num].options[2]}" name="answerChoice" id="optionC">
+                <label for="optionC"><span><span></span></span>${newQuestions[num].options[2]}</label>
             </div>
         <br>    
             <div id="radio3">
-                <input type="radio" value="3" name="answerChoice" id="optionD">
-                <label for="optionD"><span><span></span></span>${questions[num].options[3]}</label>
+                <input type="radio" value="${newQuestions[num].options[3]}" name="answerChoice" id="optionD">
+                <label for="optionD"><span><span></span></span>${newQuestions[num].options[3]}</label>
             </div>
         <br>
         <div class="inputSubmit">
@@ -197,24 +265,24 @@ function writeFeedback() {
     let num = store.question;
     return `<div class="feedback">
         <h2>Question ${store.question + 1}/5</h2>
-        <p id="question">${questions[num].question}?</p>
+        <p id="question">${newQuestions[num].question}?</p>
         <p id="progress">Progress: ${store.score}/${num + 1}</p>
         <p id="feedbackResult">You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
         <form id='optionsFeedback' role="form" action="">
-            <div class="${questions[num].answer === 0 ? 'correct' : 'false'}">
-                ${questions[num].options[0]}
+            <div class="${newQuestions[num].answer === 0 ? 'correct' : 'false'}">
+                ${newQuestions[num].options[0]}
             </div>
         <br>
-            <div class="${questions[num].answer === 1 ? 'correct' : 'false'}">
-                ${questions[num].options[1]}
+            <div class="${newQuestions[num].answer === 1 ? 'correct' : 'false'}">
+                ${newQuestions[num].options[1]}
             </div>
         <br>
-            <div class="${questions[num].answer === 2 ? 'correct' : 'false'}">
-                ${questions[num].options[2]}
+            <div class="${newQuestions[num].answer === 2 ? 'correct' : 'false'}">
+                ${newQuestions[num].options[2]}
             </div>
         <br>
-            <div class="${questions[num].answer === 3 ? 'correct' : 'false'}">
-                ${questions[num].options[3]}
+            <div class="${newQuestions[num].answer === 3 ? 'correct' : 'false'}">
+                ${newQuestions[num].options[3]}
             </div>
         <br>
         <div class="inputSubmit">
