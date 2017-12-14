@@ -4,15 +4,15 @@ const store = {
     currentAnswer: null,
     answerCorrect: null,
     score: 0,
-    sessionToken: false,
-    numberOfQuestions: SUBMITTED,
+    sessionTokenStatus: false,
+    // numberOfQuestions: SUBMITTED,
 }
 
-// fetch session token
+// fetch session token from API
 let sessionToken = undefined;
 
 const BASE_URL = 'https://opentdb.com';
-const TOKEN_PATH = 'api_token.php';
+const TOKEN_PATH = '/api_token.php';
 
 function fetchSessionToken(callback) {
    $.getJSON(BASE_URL + TOKEN_PATH, {command: 'request'}, function(response) {
@@ -21,16 +21,21 @@ function fetchSessionToken(callback) {
       } else {
         sessionToken = response.token;
         callback();
+        render();
       }
    })
 };
-
-fetchSessionToken(function(){
-    store.sessionToken = true;
-    console.log(sessionToken);
-    render();
-});
     
+function updateStoreTokenStatus(){
+    store.sessionTokenStatus = true;
+    console.log(sessionToken);
+};
+
+fetchSessionToken(updateStoreTokenStatus);
+
+// fetch questions from API
+
+
 
 const questions = [{
         question: "Who is 'the hound'",
@@ -120,16 +125,16 @@ function checkAnswer() {
     }
 }
 
-$('#quiz').on('submit', '#optionsFeedback', function (event) {
-    event.preventDefault();
-    store.question++;
-    if (store.question === store.numberOfQuestions) {
-        store.view = 'finish';
-    } else {
-        store.view = 'question';
-    }
-    render();
-});
+// $('#quiz').on('submit', '#optionsFeedback', function (event) {
+//     event.preventDefault();
+//     store.question++;
+//     if (store.question === store.numberOfQuestions) {
+//         store.view = 'finish';
+//     } else {
+//         store.view = 'question';
+//     }
+//     render();
+// });
 
 function writeQuestion() {
     let num = store.question;
