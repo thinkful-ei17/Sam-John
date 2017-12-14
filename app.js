@@ -4,7 +4,33 @@ const store = {
     currentAnswer: null,
     answerCorrect: null,
     score: 0,
+    sessionToken: false,
+    numberOfQuestions: SUBMITTED,
 }
+
+// fetch session token
+let sessionToken = undefined;
+
+const BASE_URL = 'https://opentdb.com';
+const TOKEN_PATH = 'api_token.php';
+
+function fetchSessionToken(callback) {
+   $.getJSON(BASE_URL + TOKEN_PATH, {command: 'request'}, function(response) {
+      if (response.response_code !== 0) {
+        throw new Error('Something went wrong');
+      } else {
+        sessionToken = response.token;
+        callback();
+      }
+   })
+};
+
+fetchSessionToken(function(){
+    store.sessionToken = true;
+    console.log(sessionToken);
+    render();
+});
+    
 
 const questions = [{
         question: "Who is 'the hound'",
@@ -97,7 +123,7 @@ function checkAnswer() {
 $('#quiz').on('submit', '#optionsFeedback', function (event) {
     event.preventDefault();
     store.question++;
-    if (store.question === 5) {
+    if (store.question === store.numberOfQuestions) {
         store.view = 'finish';
     } else {
         store.view = 'question';
