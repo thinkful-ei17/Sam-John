@@ -74,6 +74,8 @@ function fetchQuestions(callback) {
     })
 };
 
+// convertQuestions to proper format
+
 let newQuestions = [];
 
 function createEmptyQuestionsFolder() {
@@ -91,15 +93,9 @@ function recordQuestions(data){
         newQuestions[i].options.push(newQuestions[i].answer);
     }
     console.log(newQuestions);
+    render();
 }
     
-    // function convertQuestions(questionData) {
-    //     console.log(questionData);
-    //     for (let i=0; i<store.numberOfQuestions; i++){
-    //         newQuestions.push(questionData[i].question);
-    //     }
-    //     console.log(newQuestions);
-
 // log requested data (number of questions, category)
 
 function requestedNumberOfQuestions(){
@@ -110,10 +106,6 @@ function requestedNumberOfQuestions(){
 function requestedCategory(){
     query.category = $('#optionsOfCategories').val();
 };
-
-// convert questions into proper format
-
-
 
 const questions = [{
         question: "Who is 'the hound'",
@@ -188,8 +180,6 @@ $('#start').click(function (event) {
         requestedCategory();
         createEmptyQuestionsFolder();
         fetchQuestions(recordQuestions);
-        // convertQuestions(apiQuestions);
-        render();
     }
 });
 
@@ -198,7 +188,7 @@ $('#quiz').on('submit', '#optionsQuestions', function (event) {
     if ($('input[name="answerChoice"]').is(':checked')) {
         let response = $('input[name="answerChoice"]:checked').val();
         store.view = 'feedback';
-        store.currentAnswer = newQuestions.answer;
+        store.currentAnswer = response;
         render();
     } else {
         alert('Please select something!');
@@ -207,7 +197,7 @@ $('#quiz').on('submit', '#optionsQuestions', function (event) {
 });
 
 function checkAnswer() {
-    if (store.currentAnswer === questions[store.question].answer) {
+    if (store.currentAnswer === newQuestions[store.question].answer) {
         store.answerCorrect = true;
         store.score++;
     } else {
@@ -218,7 +208,7 @@ function checkAnswer() {
 $('#quiz').on('submit', '#optionsFeedback', function (event) {
     event.preventDefault();
     store.question++;
-    if (store.question === store.numberOfQuestions) {
+    if (store.question === parseInt(store.numberOfQuestions, 10)) {
         store.view = 'finish';
     } else {
         store.view = 'question';
@@ -266,22 +256,22 @@ function writeFeedback() {
     return `<div class="feedback">
         <h2>Question ${store.question + 1}/5</h2>
         <p id="question">${newQuestions[num].question}?</p>
-        <p id="progress">Progress: ${store.score}/${num + 1}</p>
+        <p id="progress">Progress: ${store.score}/${numberOfQuestions}</p>
         <p id="feedbackResult">You are ${store.answerCorrect ? 'CORRECT' : 'WRONG'}!</p>
         <form id='optionsFeedback' role="form" action="">
-            <div class="${newQuestions[num].answer === 0 ? 'correct' : 'false'}">
+            <div class="${newQuestions[num].answer === newQuestions[num].options[0] ? 'correct' : 'false'}">
                 ${newQuestions[num].options[0]}
             </div>
         <br>
-            <div class="${newQuestions[num].answer === 1 ? 'correct' : 'false'}">
+            <div class="${newQuestions[num].answer === newQuestions[num].options[1] ? 'correct' : 'false'}">
                 ${newQuestions[num].options[1]}
             </div>
         <br>
-            <div class="${newQuestions[num].answer === 2 ? 'correct' : 'false'}">
+            <div class="${newQuestions[num].answer === newQuestions[num].options[2] ? 'correct' : 'false'}">
                 ${newQuestions[num].options[2]}
             </div>
         <br>
-            <div class="${newQuestions[num].answer === 3 ? 'correct' : 'false'}">
+            <div class="${newQuestions[num].answer === newQuestions[num].options[3] ? 'correct' : 'false'}">
                 ${newQuestions[num].options[3]}
             </div>
         <br>
@@ -295,19 +285,19 @@ function writeFeedback() {
 }
 
 function writeFinalPage() {
-    let verdict = 'hello';
+    let verdict = '';
     if (store.score === 0) {
         verdict = "<p>You know nothing Jon Snow.</p>";
-    } else if (store.score === 1) {
-        verdict = "<p>The Lannister's send their regards</p>";
-    } else if (store.score === 2) {
-        verdict = "<p>You would die by The Mountain! It's time for you to rewatch Game Of Thrones.</p>";
-    } else if (store.score === 3) {
-        verdict = "<p>You have gained the attention of the Lord Of Light. Perhaps with more practice you may be his Chosen One.</p>";
-    } else if (store.score === 4) {
-        verdict = "<p>You really know your Game Of Thrones. You would fit right in on Westeros</p>";
-    } else if (store.score === 5) {
-        verdict = "<p>Ok ok ok. You definitely know your Game Of Thrones. Now it's time for you to go outside and get some sun.</p>";
+    } else if (store.score < numberOfQuestions/5) {
+        verdict = "<p>You should probably do some more studying before you try again.</p>";
+    } else if (store.score < numberOfQuestions/2) {
+        verdict = "<p>I guess that could have been worse.</p>";
+    } else if (store.score < numberOfQuestions/1.5) {
+        verdict = "<p>That was probably a fluke. Try AGAIN.</p>";
+    } else if (store.score === numberOfQuestions) {
+        verdict = "<p>Okay okay okay. You definitely know your triva. Now it's time for you to go outside and get some sun.</p>";
+    } else {
+        verdict = "<p>I'm impressed, but you could do better. Keep at it and maybe one day you'll get them all.</p>"
     }
 
     return `<div class='finish'>
