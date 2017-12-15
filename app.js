@@ -33,28 +33,72 @@ function updateStoreTokenStatus(){
 
 fetchSessionToken(updateStoreTokenStatus);
 
-// fet categories from API
+// Printing categories for the start page
 
-let categories = [];
+const categories = [
+    {id: 9, name: "General Knowledge"}
+    , {id: 10, name: "Entertainment: Books"}
+    , {id: 11, name: "Entertainment: Film"}
+    , {id: 12, name: "Entertainment: Music"}
+    , {id: 13, name: "Entertainment: Musicals & Theatres"}
+    , {id: 14, name: "Entertainment: Television"}
+    , {id: 15, name: "Entertainment: Video Games"}
+    , {id: 16, name: "Entertainment: Board Games"}
+    , {id: 17, name: "Science & Nature"}
+    , {id: 18, name: "Science: Computers"}
+    , {id: 19, name: "Science: Mathematics"}
+    , {id: 20, name: "Mythology"}
+    , {id: 21, name: "Sports"}
+    , {id: 22, name: "Geography"}
+    , {id: 23, name: "History"}
+    , {id: 24, name: "Politics"}
+    , {id: 25, name: "Art"}
+    , {id: 26, name: "Celebrities"}
+    , {id: 27, name: "Animals"}
+    , {id: 28, name: "Vehicles"}
+    , {id: 29, name: "Entertainment: Comics"}
+    , {id: 30, name: "Science: Gadgets"}
+    , {id: 31, name: "Entertainment: Japanese Anime & Manga"}
+    , {id: 32, name: "Entertainment: Cartoon & Animations"}];
 
-const CATEGORY_PATH = '/api_category.php';
+function generateCategoriesData(data){
+    let formOptions = [];
+    for (let i=0; i<data.length; i++){
+        formOptions.push(`<option value=${data[i].id}>${data[i].name}</option>`);   
+    }
+    return formOptions.join('');
+}
 
-function fetchQuestionCategories(callback) {
-    $.getJSON(BASE_URL + CATEGORY_PATH, function(response) {
-         callback(response);
-    })
- };
-
-function recordCategories(data){
-    categories = data.trivia_categories;
-    console.log(categories);
+function writeStartPage(data){
+    return `
+    <div class="startPage">
+        <h1>Quiz</h1>
+        <p>This quiz is meant to test your knowledge! Good luck!</p>
+        <form id="startingPageForm">
+            <div id="numberOfQuestions">
+                <select id="optionsOfQuestions">
+                    <option value=5>5</option>
+                    <option value=10>10</option>
+                    <option value=15>15</option>
+                    <option value=25>25</option>
+                    <option value=50>50</option>                    
+                </select>
+            </div>
+            <div id="categoryChoice">
+                <select id="optionsOfCategories">
+                    <option value=''>Any Category</option>
+                    ${generateCategoriesData(data)}                   
+                </select>
+            </div>
+            <div class="inputSubmit">
+                <input type="submit" id="start" value="START">
+            </div>
+        </form>
+    </div>
+    `
 };
 
- fetchQuestionCategories(recordCategories);
-
 // fetch questions from API
-
-let apiQuestions = [];
 
 const QUESTION_PATH = '/api.php'
 const query = {
@@ -94,17 +138,13 @@ function shuffleArray(array){
 };
 
 function importAndRenderQuestions(data){
-    apiQuestions = data.results;
     for (let i=0; i<store.numberOfQuestions; i++){
         newQuestions[i].question = data.results[i].question;
         newQuestions[i].options = data.results[i].incorrect_answers;
         newQuestions[i].answer = data.results[i].correct_answer;
         newQuestions[i].options.push(newQuestions[i].answer);
-        console.log(newQuestions[i].options);
         shuffleArray(newQuestions[i].options);
-        console.log(newQuestions[i].options);
     }
-    console.log(newQuestions);
     render();
 }
     
@@ -125,15 +165,17 @@ function render() {
         $('.questionsPage').hide();
         $('.feedback').hide();
         $('.finish').hide();
+        let htmlStart = writeStartPage(categories);
+        $('.startPage').replaceWith(htmlStart);
     } else if (store.view === 'question') {
-        $('.start').hide();
+        $('.startPage').hide();
         $('.questionsPage').show();
         $('.feedback').hide();
         $('.finish').hide();
         let htmlQuestion = writeQuestion();
         $('.questionsPage').replaceWith(htmlQuestion);
     } else if (store.view === 'feedback') {
-        $('.start').hide();
+        $('.startPage').hide();
         $('.questionsPage').hide();
         $('.feedback').show();
         $('.finish').hide();
@@ -141,7 +183,7 @@ function render() {
         let htmlFeedback = writeFeedback();
         $('.feedback').replaceWith(htmlFeedback);
     } else {
-        $('.start').hide();
+        $('.startPage').hide();
         $('.questionsPage').hide();
         $('.feedback').hide();
         $('.finish').show();
@@ -152,9 +194,7 @@ function render() {
 
 render();
 
-
-
-$('#start').click(function (event) {
+$('#quiz').on('submit','#startingPageForm', function (event) {
     event.preventDefault();
     if (store.sessionTokenStatus !== true){
         alert("Please be patient. I'm still loading.")
@@ -272,7 +312,6 @@ function writeFeedback() {
 function writeFinalPage() {
     let num = parseInt(store.numberOfQuestions, 10);
     let verdict = '';
-    console.log(num/2);
     if (store.score === 0) {
         verdict = "<p>You know nothing Jon Snow.</p>";
     } else if (store.score === num) {
@@ -282,7 +321,7 @@ function writeFinalPage() {
     } else if (store.score > num/2) {
         verdict = "<p>I guess that could have been worse.</p>";
     } else if (store.score > num/5) {
-        verdict = "<p>Come on. That's the best you can do. Try Harder.</p>";
+        verdict = "<p>Come on. Is that the best you can do? Try Harder.</p>";
     } else {
         verdict = "<p>You should probably do some more studying before you try again.</p>"
     }
@@ -302,5 +341,7 @@ $('#quiz').on('click', '#tryAgain', function (event) {
     store.currentAnswer = null;
     store.answerCorrect = null;
     store.score = 0;
+    store.numberOfQuestions = null;
+    console.log(sessionToken)
     render();
 });
