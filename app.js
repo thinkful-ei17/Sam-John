@@ -1,3 +1,6 @@
+'use strict';
+/* global $ */
+
 const store = {
     view: 'start',
     question: null,
@@ -6,99 +9,31 @@ const store = {
     score: 0,
     sessionTokenStatus: false,
     numberOfQuestions: null,
-}
+};
 
-// fetch session token from API
+// Fetch Token from API
+
 let sessionToken = undefined;
 
 const BASE_URL = 'https://opentdb.com';
 const TOKEN_PATH = '/api_token.php';
 
 function fetchSessionToken(callback) {
-   $.getJSON(BASE_URL + TOKEN_PATH, {command: 'request'}, function(response) {
+    $.getJSON(BASE_URL + TOKEN_PATH, {command: 'request'}, function(response) {
       if (response.response_code !== 0) {
         throw new Error('There was a problem connecting to the API. Try again later.');
       } else {
         sessionToken = response.token;
-        callback();
-        render();
-      }
+        console.log(sessionToken);
+        store.sessionTokenStatus = true;
+        return callback();
+    }
    })
 };
 
-function updateStoreTokenStatus(){
-    store.sessionTokenStatus = true;
-    console.log(sessionToken);
-};
+fetchSessionToken(render);
 
-fetchSessionToken(updateStoreTokenStatus);
-
-// Printing categories for the start page
-
-const categories = [
-    {id: 9, name: "General Knowledge"}
-    , {id: 10, name: "Entertainment: Books"}
-    , {id: 11, name: "Entertainment: Film"}
-    , {id: 12, name: "Entertainment: Music"}
-    , {id: 13, name: "Entertainment: Musicals & Theatres"}
-    , {id: 14, name: "Entertainment: Television"}
-    , {id: 15, name: "Entertainment: Video Games"}
-    , {id: 16, name: "Entertainment: Board Games"}
-    , {id: 17, name: "Science & Nature"}
-    , {id: 18, name: "Science: Computers"}
-    , {id: 19, name: "Science: Mathematics"}
-    , {id: 20, name: "Mythology"}
-    , {id: 21, name: "Sports"}
-    , {id: 22, name: "Geography"}
-    , {id: 23, name: "History"}
-    , {id: 24, name: "Politics"}
-    , {id: 25, name: "Art"}
-    , {id: 26, name: "Celebrities"}
-    , {id: 27, name: "Animals"}
-    , {id: 28, name: "Vehicles"}
-    , {id: 29, name: "Entertainment: Comics"}
-    , {id: 30, name: "Science: Gadgets"}
-    , {id: 31, name: "Entertainment: Japanese Anime & Manga"}
-    , {id: 32, name: "Entertainment: Cartoon & Animations"}];
-
-function generateCategoriesData(data){
-    let formOptions = [];
-    for (let i=0; i<data.length; i++){
-        formOptions.push(`<option value=${data[i].id}>${data[i].name}</option>`);   
-    }
-    return formOptions.join('');
-}
-
-function writeStartPage(data){
-    return `
-    <div class="startPage">
-        <h1>Quiz</h1>
-        <p>This quiz is meant to test your knowledge! Good luck!</p>
-        <form id="startingPageForm">
-            <div id="numberOfQuestions">
-                <select id="optionsOfQuestions">
-                    <option value=5>5</option>
-                    <option value=10>10</option>
-                    <option value=15>15</option>
-                    <option value=25>25</option>
-                    <option value=50>50</option>                    
-                </select>
-            </div>
-            <div id="categoryChoice">
-                <select id="optionsOfCategories">
-                    <option value=''>Any Category</option>
-                    ${generateCategoriesData(data)}                   
-                </select>
-            </div>
-            <div class="inputSubmit">
-                <input type="submit" id="start" value="START">
-            </div>
-        </form>
-    </div>
-    `
-};
-
-// fetch questions from API
+// Fetch Questions from API
 
 const QUESTION_PATH = '/api.php'
 const query = {
@@ -118,7 +53,7 @@ function fetchQuestions(callback) {
     })
 };
 
-// convertQuestions to proper format
+// Format Questions
 
 let newQuestions = [];
 
@@ -126,7 +61,7 @@ function createEmptyQuestionsFolder() {
     for (let i=0; i<store.numberOfQuestions; i++){
         newQuestions.push({'question': null, 'options': null, 'answer': null});
     }
-}
+};
 
 function shuffleArray(array){
     for (let i = array.length - 1; i > 0; i--) {
@@ -146,9 +81,9 @@ function importAndRenderQuestions(data){
         shuffleArray(newQuestions[i].options);
     }
     render();
-}
+};
     
-// log requested data (number of questions, category)
+// Log Requested Data
 
 function requestedNumberOfQuestions(){
     query.amount = $('#optionsOfQuestions').val()
@@ -159,13 +94,26 @@ function requestedCategory(){
     query.category = $('#optionsOfCategories').val();
 };
 
+// Document Feedback
+
+function checkAnswer() {
+    if (store.currentAnswer === newQuestions[store.question].answer) {
+        store.answerCorrect = true;
+        store.score++;
+    } else {
+        store.answerCorrect = false;
+    }
+};
+
+// Render Function
+
 function render() {
     if (store.view === 'start') {
         $('.start').show();
         $('.questionsPage').hide();
         $('.feedback').hide();
         $('.finish').hide();
-        let htmlStart = writeStartPage(categories);
+        let htmlStart = writeStartPage();
         $('.startPage').replaceWith(htmlStart);
     } else if (store.view === 'question') {
         $('.startPage').hide();
@@ -190,9 +138,9 @@ function render() {
         let htmlFinalPage = writeFinalPage();
         $('.finish').replaceWith(htmlFinalPage);
     }
-}
+};
 
-render();
+// Event Listeners
 
 $('#quiz').on('submit','#startingPageForm', function (event) {
     event.preventDefault();
@@ -204,6 +152,7 @@ $('#quiz').on('submit','#startingPageForm', function (event) {
         requestedNumberOfQuestions();
         requestedCategory();
         createEmptyQuestionsFolder();
+        console.log(sessionToken);
         fetchQuestions(importAndRenderQuestions);
     }
 });
@@ -221,15 +170,6 @@ $('#quiz').on('submit', '#optionsQuestions', function (event) {
     }
 });
 
-function checkAnswer() {
-    if (store.currentAnswer === newQuestions[store.question].answer) {
-        store.answerCorrect = true;
-        store.score++;
-    } else {
-        store.answerCorrect = false;
-    }
-}
-
 $('#quiz').on('submit', '#optionsFeedback', function (event) {
     event.preventDefault();
     store.question++;
@@ -240,6 +180,83 @@ $('#quiz').on('submit', '#optionsFeedback', function (event) {
     }
     render();
 });
+
+$('#quiz').on('click', '#tryAgain', function (event) {
+    store.view = 'start';
+    store.question = null;
+    store.currentAnswer = null;
+    store.answerCorrect = null;
+    store.score = 0;
+    store.numberOfQuestions = null;
+    console.log(sessionToken)
+    render();
+});
+
+// Content Generators
+
+function generateCategoriesData(){
+    let formOptions = [];
+
+    const categories = [
+        {id: 9, name: "General Knowledge"}
+        , {id: 10, name: "Entertainment: Books"}
+        , {id: 11, name: "Entertainment: Film"}
+        , {id: 12, name: "Entertainment: Music"}
+        , {id: 13, name: "Entertainment: Musicals & Theatres"}
+        , {id: 14, name: "Entertainment: Television"}
+        , {id: 15, name: "Entertainment: Video Games"}
+        , {id: 16, name: "Entertainment: Board Games"}
+        , {id: 17, name: "Science & Nature"}
+        , {id: 18, name: "Science: Computers"}
+        , {id: 19, name: "Science: Mathematics"}
+        , {id: 20, name: "Mythology"}
+        , {id: 21, name: "Sports"}
+        , {id: 22, name: "Geography"}
+        , {id: 23, name: "History"}
+        , {id: 24, name: "Politics"}
+        , {id: 25, name: "Art"}
+        , {id: 26, name: "Celebrities"}
+        , {id: 27, name: "Animals"}
+        , {id: 28, name: "Vehicles"}
+        , {id: 29, name: "Entertainment: Comics"}
+        , {id: 30, name: "Science: Gadgets"}
+        , {id: 31, name: "Entertainment: Japanese Anime & Manga"}
+        , {id: 32, name: "Entertainment: Cartoon & Animations"}];
+
+    for (let i=0; i<categories.length; i++){
+        formOptions.push(`<option value=${categories[i].id}>${categories[i].name}</option>`);   
+    }
+    return formOptions.join('');
+};
+
+function writeStartPage(){
+    return `
+    <div class="startPage">
+        <h1>Quiz</h1>
+        <p>This quiz is meant to test your knowledge! Good luck!</p>
+        <form id="startingPageForm">
+            <div id="numberOfQuestions">
+                <select id="optionsOfQuestions">
+                    <option value=5>5</option>
+                    <option value=10>10</option>
+                    <option value=15>15</option>
+                    <option value=25>25</option>
+                    <option value=50>50</option>                    
+                </select>
+            </div>
+            <div id="categoryChoice">
+                <select id="optionsOfCategories">
+                    <option value=''>Any Category</option>
+                    ${generateCategoriesData()}                   
+                </select>
+            </div>
+            <div class="inputSubmit">
+                <input type="submit" id="start" value="START">
+            </div>
+        </form>
+    </div>
+    `
+};
 
 function writeQuestion() {
     let num = store.question;
@@ -274,7 +291,7 @@ function writeQuestion() {
         </form>
     </div>
     `
-}
+};
 
 function writeFeedback() {
     let num = store.question;
@@ -307,7 +324,7 @@ function writeFeedback() {
         
     </div>
     `
-}
+};
 
 function writeFinalPage() {
     let num = parseInt(store.numberOfQuestions, 10);
@@ -333,15 +350,4 @@ function writeFinalPage() {
         <button type="submit" alt="Try Again?" id="tryAgain">TRY AGAIN?</button>
     </div>
     `;
-}
-
-$('#quiz').on('click', '#tryAgain', function (event) {
-    store.view = 'start';
-    store.question = null;
-    store.currentAnswer = null;
-    store.answerCorrect = null;
-    store.score = 0;
-    store.numberOfQuestions = null;
-    console.log(sessionToken)
-    render();
-});
+};

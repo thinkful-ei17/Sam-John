@@ -14,7 +14,7 @@ body {
     margin: auto;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -53,7 +53,7 @@ form {
         width: 15em;
     }
     #quiz {
-        font-size: 22px;
+        font-size: 18px;
     }
 }
 
@@ -107,10 +107,6 @@ input[type=radio]:not(old)+label>span {
     border: 0.0625em solid rgb(192, 192, 192);
     border-radius: 0.25em;
     background: rgb(224, 224, 224);
-    /* background-image: -moz-linear-gradient(rgb(240, 240, 240), rgb(224, 224, 224));
-    background-image: -ms-linear-gradient(rgb(240, 240, 240), rgb(224, 224, 224));
-    background-image: -o-linear-gradient(rgb(240, 240, 240), rgb(224, 224, 224));
-    background-image: -webkit-linear-gradient(rgb(240, 240, 240), rgb(224, 224, 224)); */
     background-image: linear-gradient(rgb(240, 240, 240), rgb(224, 224, 224));
     vertical-align: bottom;
 }
@@ -123,9 +119,5 @@ input[type=radio]:not(old):checked+label>span>span {
     border: 0.0625em solid rgb(115, 153, 77);
     border-radius: 0.125em;
     background: rgb(153, 204, 102);
-    /* background-image: -moz-linear-gradient(rgb(179, 217, 140), rgb(153, 204, 102));
-    background-image: -ms-linear-gradient(rgb(179, 217, 140), rgb(153, 204, 102));
-    background-image: -o-linear-gradient(rgb(179, 217, 140), rgb(153, 204, 102));
-    background-image: -webkit-linear-gradient(rgb(179, 217, 140), rgb(153, 204, 102)); */
     background-image: linear-gradient(rgb(179, 217, 140), rgb(153, 204, 102));
 }
