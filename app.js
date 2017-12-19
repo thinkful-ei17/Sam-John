@@ -11,11 +11,13 @@ const store = {
     numberOfQuestions: null,
 };
 
-// Fetch Token from API
-
-let sessionToken = undefined;
+// Communication with API
 
 const BASE_URL = 'https://opentdb.com';
+
+// Fetch Token
+
+let sessionToken = undefined;
 const TOKEN_PATH = '/api_token.php';
 
 function fetchSessionToken(callback) {
@@ -33,7 +35,7 @@ function fetchSessionToken(callback) {
 
 fetchSessionToken(render);
 
-// Fetch Questions from API
+// Fetch Questions
 
 const QUESTION_PATH = '/api.php'
 const query = {
